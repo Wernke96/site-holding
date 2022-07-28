@@ -8,8 +8,8 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
     services:
-      maria:
-        image: mysql:8.0.8
+      mysql:
+        image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
           MYSQL_DATABASE: site-holding-app-test
@@ -54,7 +54,7 @@ jobs:
           name: coverage-html
           path: output
           if-no-files-found: ignore
-          
+
   code_style:
     name: PSR2 code style check
     runs-on: ubuntu-latest
@@ -62,16 +62,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-
-      - name: Get Composer Cache Directory
-        id: composer-cache
-        run: echo "::set-output name=dir::$(composer config cache-files-dir)"
-
-      - uses: actions/cache@v2
-        with:
-          path: ${{ steps.composer-cache.outputs.dir }}
-          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ runner.os }}-composer-
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
