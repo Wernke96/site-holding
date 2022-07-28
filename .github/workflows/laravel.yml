@@ -46,6 +46,9 @@ jobs:
           node-version: 16
 
       - name: node packages
+        run: npm install
+
+      - name: node run
         run: npm run dev
 
       - name: Directory Permissions
