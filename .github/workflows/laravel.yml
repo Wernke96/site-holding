@@ -12,7 +12,7 @@ jobs:
         image: mysql:8.0
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: site-holding-app-test
+          MYSQL_DATABASE: site-holding-test
           MYSQL_USER: siteHolding
           MYSQL_PASSWORD: siteHolding
         ports:
