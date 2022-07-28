@@ -26,6 +26,8 @@ services:
         environment:
             PHP_IDE_CONFIG: serverName=docker
             XDEBUG_CONFIG: remote_host=host.docker.internal
+        ports:
+          - '5173:5173'
         volumes:
             - ../:/code
         networks:
