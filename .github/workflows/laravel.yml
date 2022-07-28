@@ -44,8 +44,17 @@ jobs:
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
 
+      - name: Setup Migrations
+          env:
+            DB_PORT: ${{ job.services.mysql.ports[3306] }}
+          run: php artisan migrate -n
+
+
       - name: Execute tests (With Coverage) via PHPUnit
         env:
+          DB_DATABASE: site-holding-test
+          DB_USERNAME: holding
+          DB_PASSWORD: holding
           DB_PORT: ${{ job.services.maria.ports[3306] }}
         run: php artisan test --without-tty --coverage --min=40 --coverage-html=output
 
