@@ -58,7 +58,6 @@ jobs:
   code_style:
     name: PSR2 code style check
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -66,11 +65,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.0
-          tools: composer:v2
-          extensions: dom, curl, libxml, mbstring, zip, pcntl, gd
-          coverage: none
-
+          php-version: 8.1
       - name: Install dependencies
         run: composer install --prefer-dist --no-suggest --no-interaction --optimize-autoloader
 
