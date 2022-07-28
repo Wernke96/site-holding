@@ -8,11 +8,13 @@ jobs:
   laravel-tests:
     runs-on: ubuntu-latest
     services:
-      mysql:
-        image: mysql:8.0
+      maria:
+        image: mariadb:10.6
         env:
           MYSQL_ALLOW_EMPTY_PASSWORD: yes
-          MYSQL_DATABASE: site-holding-test
+          MYSQL_DATABASE: site-holding-app-test
+          MYSQL_USER: holding
+          MYSQL_PASSWORD: holding
         ports:
           - 3306
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
@@ -32,6 +34,10 @@ jobs:
         run: composer install -q --no-ansi --no-interaction --no-scripts --no-suggest --no-progress --prefer-dist
 
       - name: Generate key
+        env:
+          DB_DATABASE: site-holding-app-test
+          DB_USERNAME: holding
+          DB_PASSWORD: holding
         run: php artisan key:generate
 
       - name: Directory Permissions
@@ -39,7 +45,6 @@ jobs:
 
       - name: Execute tests (With Coverage) via PHPUnit
         env:
-          DB_DATABASE: site-holding-test
           DB_PORT: ${{ job.services.maria.ports[3306] }}
         run: php artisan test --without-tty --coverage --min=40 --coverage-html=output
 
