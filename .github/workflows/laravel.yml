@@ -45,9 +45,9 @@ jobs:
         run: chmod -R 777 storage bootstrap/cache
 
       - name: Setup Migrations
-          env:
-            DB_PORT: ${{ job.services.mysql.ports[3306] }}
-          run: php artisan migrate -n
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        run: php artisan migrate -n
 
 
       - name: Execute tests (With Coverage) via PHPUnit
