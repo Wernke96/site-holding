@@ -46,7 +46,7 @@ jobs:
           node-version: 16
 
       - name: node packages
-        uses: npm run dev
+        run: npm run dev
 
       - name: Directory Permissions
         run: chmod -R 777 storage bootstrap/cache
