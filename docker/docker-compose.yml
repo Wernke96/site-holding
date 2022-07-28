@@ -1,0 +1,90 @@
+---
+version: '3'
+services:
+    # Web Container (talks to nginx-proxy)
+    # The virtual host environment line allows nginx-proxy to know which domain
+    # to proxy to which container.
+    # Additionally, other networks can be registered (databases needed)
+    site-holding-web:
+        image: nginx:latest
+        container_name: site_holding_web
+        tty: true
+        environment:
+            VIRTUAL_HOST: holding.docker
+        volumes:
+            - ../:/code
+            - ./config/vhost.conf:/etc/nginx/conf.d/vhost.conf
+        networks:
+            - holding-network
+    # PHP Container
+    # The environment variables allow Xdebug to work properly.
+    # Networks much like above can be registered depending on what the app
+    # requires. In this case, MariaDB.
+    site-holding-php:
+        container_name: site_holding_php
+        build: .
+        environment:
+            PHP_IDE_CONFIG: serverName=docker
+            XDEBUG_CONFIG: remote_host=host.docker.internal
+        volumes:
+            - ../:/code
+        networks:
+            - holding-network
+
+    nginxproxy:
+      image: jwilder/nginx-proxy
+      container_name: site_holding_nginx_proxy
+      ports:
+        - "80:80"
+      volumes:
+        - /var/run/docker.sock:/tmp/docker.sock:ro
+        - ./proxy_increase.conf:/etc/nginx/proxy.conf
+      networks:
+        - holding-network
+
+    mysql:
+      image: mysql:8.0.30
+      container_name: site_holding_db
+      restart: unless-stopped
+      tty: true
+      ports:
+        - "3306:3306"
+      environment:
+        MYSQL_DATABASE: site-holding
+        MYSQL_ROOT_PASSWORD: root
+        MYSQL_USER: mysqluser
+        MYSQL_PASSWORD: mysqlpassword
+        SERVICE_TAGS: dev
+        SERVICE_NAME: mysql
+      volumes:
+        - dbdata:/var/lib/mysql/
+        - ./mysql/my.cnf:/etc/mysql/my.cnf
+      networks:
+        - holding-network
+
+    mailhog:
+        image: 'mailhog/mailhog:latest'
+        ports:
+            - '1025:1025'
+            - '8025:8025'
+        networks:
+            - holding-network
+    redis:
+      image: redis
+      container_name: redis
+      restart: unless-stopped
+      tty: true
+      ports:
+        - 6379:6379
+      networks:
+        - holding-network
+# These are networks that you are leveraging from outside (external) locations.
+# The dev-ops repo is already running, so that network (st-internal) exists.
+networks:
+  holding-network:
+    driver: bridge
+
+#Volumes
+volumes:
+  dbdata:
+    driver: local
