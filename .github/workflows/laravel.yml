@@ -35,7 +35,7 @@ jobs:
 
       - name: Generate key
         env:
-          DB_DATABASE: site-holding-app-test
+          DB_DATABASE: site-holding-test
           DB_USERNAME: siteHolding
           DB_PASSWORD: siteHolding
         run: php artisan key:generate
